@@ -164,7 +164,6 @@ export default function App() {
 
   function handlePointerUp() {
     isPainting.current = false;
-    // currentElementId.current = null;
   }
 
   function handleDownload() {
@@ -198,6 +197,36 @@ export default function App() {
     });
   }
 
+  function handleDragEnd(e: Konva.KonvaEventObject<MouseEvent>) {
+    const draggedElementId = e.target.id();
+    if (!draggedElementId) return;
+
+    const target = e.target;
+    const newX = target.x();
+    const newY = target.y();
+
+    setElements((prev) => {
+      const newMap = new Map(prev);
+      const element = newMap.get(draggedElementId);
+      
+      if (!element) return newMap;
+
+      if (
+        element.type === WhiteboardElementType.Arrow ||
+        element.type === WhiteboardElementType.Scribble
+      ) {
+        const points = target.attrs.points;
+        element.points = points;
+      } else {
+        // Update position for Rect and Circle
+        element.x = newX;
+        element.y = newY;
+      }
+
+      newMap.set(draggedElementId, element);
+      return newMap;
+    });
+  }
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <div className="absolute top-0 z-10 w-full py-2">
@@ -292,6 +321,7 @@ export default function App() {
                     draggable={isDraggable}
                     onClick={handleElementClick}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                   />
                 );
               case WhiteboardElementType.Circle:
@@ -308,6 +338,7 @@ export default function App() {
                     draggable={isDraggable}
                     onClick={handleElementClick}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                   />
                 );
               case WhiteboardElementType.Arrow:
@@ -322,6 +353,7 @@ export default function App() {
                     draggable={isDraggable}
                     onClick={handleElementClick}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                   />
                 );
               case WhiteboardElementType.Scribble:
@@ -338,6 +370,7 @@ export default function App() {
                     draggable={isDraggable}
                     onClick={handleElementClick}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                   />
                 );
               default:
