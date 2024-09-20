@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import clsx from "clsx";
 import { RxCursorArrow } from "react-icons/rx";
 import { TbRectangle } from "react-icons/tb";
 import { GoCircle } from "react-icons/go";
@@ -55,7 +56,6 @@ export default function App() {
   const transformerRef = useRef<Konva.Transformer | null>(null);
 
   const isDraggable = currTool === WhiteboardElementType.Cursor;
-
 
   function handlePointerDown() {
     if (currTool === WhiteboardElementType.Cursor || !stageRef.current) return;
@@ -235,7 +235,6 @@ export default function App() {
       if (e.key === "Backspace" && currentElementId.current) {
         const elementToDelete = currentElementId.current;
 
-
         setElements((prev) => {
           const newMap = new Map(prev);
           newMap.delete(elementToDelete);
@@ -250,7 +249,6 @@ export default function App() {
         if (transformerRef.current) {
           transformerRef.current.nodes([]);
         }
-
       }
     }
 
@@ -265,31 +263,46 @@ export default function App() {
       <div className="absolute top-0 z-10 w-full py-2">
         <div className="flex justify-center items-center gap-4 py-2 px-4 w-fit mx-auto border shadow-lg rounded-lg">
           <button
-            className="p-3 hover:bg-violet-200 rounded"
+            className={clsx(
+              "p-3 hover:bg-violet-200 rounded",
+              currTool === WhiteboardElementType.Cursor && "bg-violet-200"
+            )}
             onClick={() => setCurrTool(WhiteboardElementType.Cursor)}
           >
             <RxCursorArrow size="1.6rem" />
           </button>
           <button
-            className="p-3 hover:bg-violet-200 rounded"
+            className={clsx(
+              "p-3 hover:bg-violet-200 rounded",
+              currTool === WhiteboardElementType.Rect && "bg-violet-200"
+            )}
             onClick={() => setCurrTool(WhiteboardElementType.Rect)}
           >
             <TbRectangle size="1.6rem" />
           </button>
           <button
-            className="p-3 hover:bg-violet-200 rounded"
+            className={clsx(
+              "p-3 hover:bg-violet-200 rounded",
+              currTool === WhiteboardElementType.Circle && "bg-violet-200"
+            )}
             onClick={() => setCurrTool(WhiteboardElementType.Circle)}
           >
             <GoCircle size="1.6rem" />
           </button>
           <button
-            className="p-3 hover:bg-violet-200 rounded"
+            className={clsx(
+              "p-3 hover:bg-violet-200 rounded",
+              currTool === WhiteboardElementType.Arrow && "bg-violet-200"
+            )}
             onClick={() => setCurrTool(WhiteboardElementType.Arrow)}
           >
             <GoArrowRight size="1.6rem" />
           </button>
           <button
-            className="p-3 hover:bg-violet-200 rounded"
+            className={clsx(
+              "p-3 hover:bg-violet-200 rounded",
+              currTool === WhiteboardElementType.Scribble && "bg-violet-200"
+            )}
             onClick={() => setCurrTool(WhiteboardElementType.Scribble)}
           >
             <GoPencil size="1.6rem" />
