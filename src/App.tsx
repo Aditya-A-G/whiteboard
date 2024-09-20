@@ -40,7 +40,7 @@ interface WhiteboardElement {
 
 export default function App() {
   const strokeColor = "#000";
-  const [fillColor, setFillColor] = useState("#FFFFFF");
+  const [fillColor, setFillColor] = useState("#00000000");
   const [currTool, setCurrTool] = useState<WhiteboardElementType>(
     WhiteboardElementType.Cursor
   );
