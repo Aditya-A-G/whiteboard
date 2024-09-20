@@ -14,7 +14,7 @@ import {
   Arrow,
   Transformer,
 } from "react-konva";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import { Vector2d } from "konva/lib/types";
 
@@ -55,6 +55,7 @@ export default function App() {
   const transformerRef = useRef<Konva.Transformer | null>(null);
 
   const isDraggable = currTool === WhiteboardElementType.Cursor;
+
 
   function handlePointerDown() {
     if (currTool === WhiteboardElementType.Cursor || !stageRef.current) return;
@@ -183,6 +184,7 @@ export default function App() {
       return;
 
     const target = e.currentTarget;
+    currentElementId.current = target.id();
     transformerRef.current.nodes([target]);
   }
 
@@ -208,7 +210,7 @@ export default function App() {
     setElements((prev) => {
       const newMap = new Map(prev);
       const element = newMap.get(draggedElementId);
-      
+
       if (!element) return newMap;
 
       if (
@@ -227,6 +229,37 @@ export default function App() {
       return newMap;
     });
   }
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Backspace" && currentElementId.current) {
+        const elementToDelete = currentElementId.current;
+
+
+        setElements((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(elementToDelete);
+          return newMap;
+        });
+
+        setZIndexOrder((prev) => {
+          return prev.filter((id) => id !== elementToDelete);
+        });
+        currentElementId.current = null;
+
+        if (transformerRef.current) {
+          transformerRef.current.nodes([]);
+        }
+
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <div className="absolute top-0 z-10 w-full py-2">
